@@ -1,0 +1,28 @@
+{
+  "name": "piano",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "test": "jest"
+  },
+  "dependencies": {
+    "core-js": "^3.15.1",
+    "nuxt": "^2.15.7",
+    "prettier": "^2.5.1",
+    "prettier-eslint": "^13.0.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^4.2.0",
+    "@vue/test-utils": "^1.2.1",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^27.0.5",
+    "eslint-plugin-vue": "^8.3.0",
+    "jest": "^27.0.5",
+    "postcss": "^8.3.5",
+    "vue-jest": "^3.0.4"
+  }
+}
