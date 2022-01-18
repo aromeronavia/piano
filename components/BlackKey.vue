@@ -4,9 +4,7 @@
     :class="{
       'invisible': !validPositions.includes(number % 7)
     }"
-  >
-    {{number}}
-  </div>
+  />
 </template>
 
 <script>
