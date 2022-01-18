@@ -7,7 +7,7 @@
         </div>
       </div>
       <div class="flex relative">
-        <key v-for="note in naturalNotes" />
+        <key v-for="note in naturalNotes" @mousedown="playNote(note)" @mouseup="stopNote" />
         <black-key v-for="i in 21" :number="i" />
       </div>
     </div>
@@ -18,8 +18,8 @@
 import Key from '@/components/Key.vue'
 import BlackKey from '@/components/BlackKey.vue'
 import Waver from '@/components/Waver.vue'
-import { naturalTones } from '@/engine/constants'
 import Note from '@/engine/note'
+import { naturalTones } from '@/engine/constants'
 
 export default {
   components: { Key, BlackKey, Waver },
@@ -51,7 +51,26 @@ export default {
       return tones;
     },
     buildSemiNotes: function () {
+    },
+    playNote(note) {
+      this.oscillator = this.audioContext.createOscillator();
+      this.oscillator.connect(this.mainGainNode);
+      this.oscillator.frequency.value = note.frequency;
+
+      this.oscillator.start();
+    },
+    stopNote() {
+      this.oscillator.stop();
     }
+
+  },
+  created: function () {
+    this.oscillator = null;
+
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.mainGainNode = this.audioContext.createGain();
+    this.mainGainNode.connect(this.audioContext.destination);
+    this.mainGainNode.gain.value = 0.4;
   }
 }
 </script>
