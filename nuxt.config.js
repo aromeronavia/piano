@@ -1,5 +1,10 @@
 export default {
+  ssr: false,
   target: 'static',
+  buildDir: 'dist',
+  generate: {
+    fallback: "404.html"
+  },
   head: {
     title: 'Piano Keyboard',
     htmlAttrs: {
