@@ -16,6 +16,7 @@ module.exports = {
       pink: colors.fuchsia,
       white: colors.white,
       blue: colors.blue,
+      navbar: "#06AED5"
     },
     fontFamily: {
       sans: ['Poppins', 'serif'],
