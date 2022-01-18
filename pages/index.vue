@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Piano from '@/components/piano.vue'
+import Piano from '@/components/Piano.vue'
 
 export default {
   components: { Piano }
