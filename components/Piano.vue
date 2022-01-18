@@ -83,6 +83,7 @@ export default {
     },
     playNote(note) {
       this.oscillator = this.audioContext.createOscillator();
+      this.oscillator.type = 'square'
       this.oscillator.connect(this.mainGainNode);
       this.oscillator.frequency.value = note.frequency;
 
@@ -98,6 +99,7 @@ export default {
       const note = this.semiNotes[indexOf];
 
       this.oscillator = this.audioContext.createOscillator();
+      this.oscillator.type = 'square'
       this.oscillator.connect(this.mainGainNode);
       this.oscillator.frequency.value = note.frequency;
 
@@ -110,7 +112,7 @@ export default {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     this.mainGainNode = this.audioContext.createGain();
     this.mainGainNode.connect(this.audioContext.destination);
-    this.mainGainNode.gain.value = 0.4;
+    this.mainGainNode.gain.value = 0.2;
   }
 }
 </script>
