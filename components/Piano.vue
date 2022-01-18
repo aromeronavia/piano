@@ -15,7 +15,7 @@
         <black-key
           v-for="i in 21"
           :number="i"
-          @mousedown="playNote(note)"
+          @mousedown="playSemiTone(i)"
           @mouseup="stopNote"
         />
       </div>
@@ -28,14 +28,21 @@ import Key from '@/components/Key.vue'
 import BlackKey from '@/components/BlackKey.vue'
 import Waver from '@/components/Waver.vue'
 import Note from '@/engine/note'
-import { naturalTones, semiTones } from '@/engine/constants'
+import { naturalTones, semiTones, tones } from '@/engine/constants'
 
 export default {
   components: { Key, BlackKey, Waver },
   data: function () {
     return {
       naturalNotes: this.buildNaturalNotes(),
-      semiNotes: this.buildSemiNotes()
+      semiNotes: this.buildSemiNotes(),
+      validSemitoneIndexes: Array.from(Array(21).keys()).reduce((acc, item, index) => {
+        if ([1, 2, 4, 5, 6].includes(index % 7)) {
+          return [...acc, index]
+        }
+
+        return [...acc]
+      }, [])
     };
   },
   methods: {
@@ -83,7 +90,19 @@ export default {
     },
     stopNote() {
       this.oscillator.stop();
-    }
+    },
+    playSemiTone(index) {
+      const indexOf = this.validSemitoneIndexes.indexOf(index)
+      if (indexOf === -1) { return }
+
+      const note = this.semiNotes[indexOf];
+
+      this.oscillator = this.audioContext.createOscillator();
+      this.oscillator.connect(this.mainGainNode);
+      this.oscillator.frequency.value = note.frequency;
+
+      this.oscillator.start();
+    },
   },
   created: function () {
     this.oscillator = null;
