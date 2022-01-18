@@ -7,10 +7,8 @@
         </div>
       </div>
       <div class="flex relative">
-        <key v-for="i in 22" :number="i" />
-        <div class="absolute w-full flex ml-6">
-          <black-key v-for="i in 21" :number="i" />
-        </div>
+        <key v-for="note in naturalNotes" />
+        <black-key v-for="i in 21" :number="i" />
       </div>
     </div>
   </div>
@@ -20,8 +18,40 @@
 import Key from '@/components/Key.vue'
 import BlackKey from '@/components/BlackKey.vue'
 import Waver from '@/components/Waver.vue'
+import { naturalTones } from '@/engine/constants'
+import Note from '@/engine/note'
 
 export default {
-  components: { Key, BlackKey, Waver }
+  components: { Key, BlackKey, Waver },
+  data: function () {
+    return {
+      naturalNotes: this.buildNaturalNotes(),
+      semiNotes: this.buildSemiNotes()
+    };
+  },
+  methods: {
+    buildNaturalNotes: function () {
+      const tones = [];
+      const octave = 2;
+
+      for (var octaveIndex = 0; octaveIndex < 3; octaveIndex++) {
+        naturalTones.forEach(tone => {
+          tones.push(new Note({
+            noteName: tone,
+            octave: octave + octaveIndex,
+          }));
+        })
+      }
+
+      tones.push(new Note({
+        noteName: 'C',
+        octave: 5
+      }));
+
+      return tones;
+    },
+    buildSemiNotes: function () {
+    }
+  }
 }
 </script>
