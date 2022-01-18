@@ -1,5 +1,5 @@
 <template>
-  <div class="text-white">
+  <div class="text-white" @mouseup="stopNote">
     <div class="w-full pb-4 pt-10 px-4 bg-gray-900 rounded-lg">
       <div class="flex justify-center mb-10">
         <div class="bg-blue-600 w-1/3 h-16 rounded-md">
