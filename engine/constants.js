@@ -22,4 +22,17 @@ export const semiTones = [
   'A#',
 ]
 
-export const tones = [...naturalTones, ...semiTones]
+export const tones = [
+  'C',
+  'C#',
+  'D',
+  'D#',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'G#',
+  'A',
+  'A#',
+  'B'
+]

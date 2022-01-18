@@ -7,8 +7,17 @@
         </div>
       </div>
       <div class="flex relative">
-        <key v-for="note in naturalNotes" @mousedown="playNote(note)" @mouseup="stopNote" />
-        <black-key v-for="i in 21" :number="i" />
+        <key
+          v-for="note in naturalNotes"
+          @mousedown="playNote(note)"
+          @mouseup="stopNote"
+        />
+        <black-key
+          v-for="i in 21"
+          :number="i"
+          @mousedown="playNote(note)"
+          @mouseup="stopNote"
+        />
       </div>
     </div>
   </div>
@@ -19,7 +28,7 @@ import Key from '@/components/Key.vue'
 import BlackKey from '@/components/BlackKey.vue'
 import Waver from '@/components/Waver.vue'
 import Note from '@/engine/note'
-import { naturalTones } from '@/engine/constants'
+import { naturalTones, semiTones } from '@/engine/constants'
 
 export default {
   components: { Key, BlackKey, Waver },
@@ -51,6 +60,19 @@ export default {
       return tones;
     },
     buildSemiNotes: function () {
+      const tones = [];
+      const octave = 2;
+
+      for (var octaveIndex = 0; octaveIndex < 3; octaveIndex++) {
+        semiTones.forEach(tone => {
+          tones.push(new Note({
+            noteName: tone,
+            octave: octave + octaveIndex,
+          }));
+        })
+      }
+
+      return tones;
     },
     playNote(note) {
       this.oscillator = this.audioContext.createOscillator();
@@ -62,7 +84,6 @@ export default {
     stopNote() {
       this.oscillator.stop();
     }
-
   },
   created: function () {
     this.oscillator = null;

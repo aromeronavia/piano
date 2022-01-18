@@ -1,10 +1,12 @@
 <template>
-  <div
+  <button
     class="absolute cursor-pointer bg-gray-900 h-28 w-5 rounded-md rounded-t-none hover:bg-blue-800"
     :class="{
       'invisible': !validPositions.includes(number % 7)
     }"
     :style="{'margin-left': `${(number * 36) - 12}px`}"
+    @mousedown="$emit('mousedown')"
+    @mouseup="$emit('mouseup')"
   />
 </template>
 
