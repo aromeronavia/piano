@@ -104,7 +104,7 @@ export default {
 
         return acc
       }, [])
-    }, 80)
+    }, 110)
   }
 }
 </script>
