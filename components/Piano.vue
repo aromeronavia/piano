@@ -32,6 +32,12 @@ import { naturalTones, semiTones, tones } from '@/engine/constants'
 
 export default {
   components: { Key, BlackKey, Waver },
+  props: {
+    type: {
+      type: String,
+      required: true,
+    }
+  },
   data: function () {
     return {
       naturalNotes: this.buildNaturalNotes(),
@@ -83,14 +89,14 @@ export default {
     },
     playNote(note) {
       this.oscillator = this.audioContext.createOscillator();
-      this.oscillator.type = 'square'
+      this.oscillator.type = this.type;
       this.oscillator.connect(this.mainGainNode);
       this.oscillator.frequency.value = note.frequency;
 
       this.oscillator.start();
     },
     stopNote() {
-      this.oscillator.stop();
+      if (this.oscillator) this.oscillator.stop();
     },
     playSemiTone(index) {
       const indexOf = this.validSemitoneIndexes.indexOf(index)
@@ -99,7 +105,7 @@ export default {
       const note = this.semiNotes[indexOf];
 
       this.oscillator = this.audioContext.createOscillator();
-      this.oscillator.type = 'square'
+      this.oscillator.type = this.type;
       this.oscillator.connect(this.mainGainNode);
       this.oscillator.frequency.value = note.frequency;
 
@@ -112,7 +118,7 @@ export default {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     this.mainGainNode = this.audioContext.createGain();
     this.mainGainNode.connect(this.audioContext.destination);
-    this.mainGainNode.gain.value = 0.2;
+    this.mainGainNode.gain.value = 0.4;
   }
 }
 </script>
