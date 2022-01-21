@@ -1,5 +1,5 @@
 <template>
-  <div class="text-white" @mouseup="stopNote">
+  <div class="text-white" @mouseup="stopNote" @keydown="handleKeyDown">
     <div class="w-full pb-4 pt-10 px-4 bg-gray-900 rounded-lg">
       <div class="flex justify-center mb-10">
         <div class="bg-blue-600 w-1/3 h-16 rounded-md">
@@ -10,13 +10,13 @@
         <key
           v-for="note in naturalNotes"
           @mousedown="playNote(note)"
-          @mouseup="stopNote"
+          @mouseup="stopNote(note)"
         />
         <black-key
           v-for="i in 21"
           :number="i"
-          @mousedown="playSemiTone(i)"
-          @mouseup="stopNote"
+          @mousedown="playSemiNote(i)"
+          @mouseup="stopSemiNote(i)"
         />
       </div>
     </div>
@@ -39,8 +39,10 @@ export default {
     }
   },
   data: function () {
+    const naturalNotes = this.buildNaturalNotes();
+
     return {
-      naturalNotes: this.buildNaturalNotes(),
+      naturalNotes,
       semiNotes: this.buildSemiNotes(),
       validSemitoneIndexes: Array.from(Array(21).keys()).reduce((acc, item, index) => {
         if ([1, 2, 4, 5, 6].includes(index % 7)) {
@@ -48,10 +50,31 @@ export default {
         }
 
         return [...acc]
-      }, [])
+      }, []),
+      keysToNotes: {
+        KeyA: naturalNotes[7],
+        KeyS: naturalNotes[8],
+        KeyD: naturalNotes[9],
+        KeyF: naturalNotes[10],
+        KeyG: naturalNotes[11],
+        KeyH: naturalNotes[12],
+        KeyJ: naturalNotes[13],
+        KeyK: naturalNotes[14],
+      },
+      oscillators: {},
     };
   },
   methods: {
+    handleKeyDown: function(event) {
+      if (this.keysToNotes[event.code]) {
+        this.playNote(this.keysToNotes[event.code])
+      }
+    },
+    handleKeyUp: function(event) {
+      if (this.keysToNotes[event.code]) {
+        this.stopNote(this.keysToNotes[event.code])
+      }
+    },
     buildNaturalNotes: function () {
       const tones = [];
       const octave = 2;
@@ -94,23 +117,26 @@ export default {
       this.oscillator.frequency.value = note.frequency;
 
       this.oscillator.start();
+      this.oscillators[note.getId()] = this.oscillator
     },
-    stopNote() {
-      if (this.oscillator) this.oscillator.stop();
+    stopNote(note) {
+      this.oscillators[note.getId()] && this.oscillators[note.getId()].stop();
+      delete this.oscillators[note.getId()];
     },
-    playSemiTone(index) {
+    playSemiNote(index) {
       const indexOf = this.validSemitoneIndexes.indexOf(index)
       if (indexOf === -1) { return }
 
       const note = this.semiNotes[indexOf];
-
-      this.oscillator = this.audioContext.createOscillator();
-      this.oscillator.type = this.type;
-      this.oscillator.connect(this.mainGainNode);
-      this.oscillator.frequency.value = note.frequency;
-
-      this.oscillator.start();
+      this.playNote(note);
     },
+    stopSemiNote(index) {
+      const indexOf = this.validSemitoneIndexes.indexOf(index)
+      if (indexOf === -1) { return }
+
+      const note = this.semiNotes[indexOf];
+      this.stopNote(note);
+    }
   },
   created: function () {
     this.oscillator = null;
@@ -119,6 +145,18 @@ export default {
     this.mainGainNode = this.audioContext.createGain();
     this.mainGainNode.connect(this.audioContext.destination);
     this.mainGainNode.gain.value = 0.4;
+  },
+  mounted: function () {
+    window.addEventListener("keydown", event => {
+      if (event.defaultPrevented) return;
+      if (event.repeat) return;
+
+      this.handleKeyDown(event);
+    });
+
+    window.addEventListener("keyup", event => {
+      this.handleKeyUp(event);
+    });
   }
 }
 </script>

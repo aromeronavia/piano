@@ -8,6 +8,10 @@ export default class Note {
     this.degree = options.degree || null;
   }
 
+  getId() {
+    return `${this.noteName}${this.octave}`;
+  }
+
   _calculateFrequency() {
     const power = this._getDistanceFromA4() / tones.length;
     return parseFloat((A4.FREQUENCY * Math.pow(2, power)).toFixed(2));
