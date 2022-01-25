@@ -1,25 +1,26 @@
 <template>
-  <div class="text-white" @mouseup="stopNote" @keydown="handleKeyDown">
+  <div class="text-white" @mouseup="stopClickedNote">
     <div class="w-full pb-4 pt-10 px-4 bg-gray-900 rounded-lg">
       <div class="flex justify-center mb-10">
         <div class="bg-blue-600 w-1/3 h-16 rounded-md">
           <waver />
         </div>
       </div>
-      <div class="flex relative">
+      <div id="keys" class="flex relative">
         <key
           v-for="note in naturalNotes"
-          @mousedown="playNote(note)"
-          @mouseup="stopNote(note)"
+          @mousedown="playNote(note, true)"
+          @mouseup="stopClickedNote"
         />
         <black-key
           v-for="i in 21"
           :number="i"
           @mousedown="playSemiNote(i)"
-          @mouseup="stopSemiNote(i)"
+          @mouseup="stopClickedNote"
         />
       </div>
     </div>
+    <p class="text-center mt-4 text-white text-lg"> Play by pressing A, S, D, F, G, H, J, K</p>
   </div>
 </template>
 
@@ -51,7 +52,7 @@ export default {
 
         return [...acc]
       }, []),
-      keysToNotes: {
+      notesByKeyCode: {
         KeyA: naturalNotes[7],
         KeyS: naturalNotes[8],
         KeyD: naturalNotes[9],
@@ -66,13 +67,14 @@ export default {
   },
   methods: {
     handleKeyDown: function(event) {
-      if (this.keysToNotes[event.code]) {
-        this.playNote(this.keysToNotes[event.code])
+      if (this.notesByKeyCode[event.code]) {
+        const note = this.notesByKeyCode[event.code];
+        this.playNote(note);
       }
     },
     handleKeyUp: function(event) {
-      if (this.keysToNotes[event.code]) {
-        this.stopNote(this.keysToNotes[event.code])
+      if (this.notesByKeyCode[event.code]) {
+        this.stopNote(this.notesByKeyCode[event.code])
       }
     },
     buildNaturalNotes: function () {
@@ -117,25 +119,30 @@ export default {
       this.oscillator.frequency.value = note.frequency;
 
       this.oscillator.start();
-      this.oscillators[note.getId()] = this.oscillator
+
+      this.oscillators[note.id] = this.oscillator
     },
     stopNote(note) {
-      this.oscillators[note.getId()] && this.oscillators[note.getId()].stop();
-      delete this.oscillators[note.getId()];
+      this.oscillators[note.id] && this.oscillators[note.id].stop();
+      delete this.oscillators[note.id];
     },
     playSemiNote(index) {
       const indexOf = this.validSemitoneIndexes.indexOf(index)
-      if (indexOf === -1) { return }
+      if (indexOf <= 0) { return }
 
       const note = this.semiNotes[indexOf];
       this.playNote(note);
     },
     stopSemiNote(index) {
       const indexOf = this.validSemitoneIndexes.indexOf(index)
-      if (indexOf === -1) { return }
+      if (indexOf <= 0) { return }
 
       const note = this.semiNotes[indexOf];
       this.stopNote(note);
+    },
+    stopClickedNote() {
+      this.oscillator && this.oscillator.stop();
+      this.oscillator = null;
     }
   },
   created: function () {
@@ -144,7 +151,7 @@ export default {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     this.mainGainNode = this.audioContext.createGain();
     this.mainGainNode.connect(this.audioContext.destination);
-    this.mainGainNode.gain.value = 0.4;
+    this.mainGainNode.gain.value = 0.2;
   },
   mounted: function () {
     window.addEventListener("keydown", event => {

@@ -8,7 +8,7 @@ export default class Note {
     this.degree = options.degree || null;
   }
 
-  getId() {
+  get id() {
     return `${this.noteName}${this.octave}`;
   }
 
