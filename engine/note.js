@@ -6,6 +6,7 @@ export default class Note {
     this.octave = !isNaN(options.octave) ? options.octave : A4.OCTAVE;
     this.frequency = this._calculateFrequency();
     this.degree = options.degree || null;
+    this.active = false;
   }
 
   get id() {
@@ -22,5 +23,13 @@ export default class Note {
     const toneDifference =  tones.indexOf(this.noteName) - tones.indexOf(A4.NOTE_NAME);
 
     return octaveDifference + toneDifference;
+  }
+
+  setActive() {
+    this.active = true;
+  }
+
+  setInactive() {
+    this.active = false;
   }
 }

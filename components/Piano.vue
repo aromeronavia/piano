@@ -9,12 +9,14 @@
       <div id="keys" class="flex relative">
         <key
           v-for="note in naturalNotes"
+          :active="note.active"
           @mousedown="playNote(note, true)"
           @mouseup="stopClickedNote"
         />
         <black-key
           v-for="i in 21"
           :number="i"
+          :active="getSemiNote(i) && getSemiNote(i).active"
           @mousedown="playSemiNote(i)"
           @mouseup="stopClickedNote"
         />
@@ -79,12 +81,15 @@ export default {
     handleKeyDown: function(event) {
       if (this.notesByKeyCode[event.code]) {
         const note = this.notesByKeyCode[event.code];
+        note.setActive();
         this.playNote(note);
       }
     },
     handleKeyUp: function(event) {
       if (this.notesByKeyCode[event.code]) {
-        this.stopNote(this.notesByKeyCode[event.code])
+        const note = this.notesByKeyCode[event.code];
+        note.setInactive();
+        this.stopNote(note);
       }
     },
     buildNaturalNotes: function () {
@@ -149,6 +154,13 @@ export default {
 
       const note = this.semiNotes[indexOf];
       this.stopNote(note);
+    },
+    getSemiNote(index) {
+      const indexOf = this.validSemitoneIndexes.indexOf(index)
+      if (indexOf <= 0) { return }
+
+      const note = this.semiNotes[indexOf];
+      return note;
     },
     stopClickedNote() {
       this.oscillator && this.oscillator.stop();
