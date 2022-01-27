@@ -20,7 +20,7 @@
         />
       </div>
     </div>
-    <p class="text-center mt-4 text-white text-lg"> Play by pressing A, S, D, F, G, H, J, K</p>
+    <p class="text-center mt-4 text-white text-lg"> Play by pressing A, S, D, F, G, H, J, K, L and Semicolon (or Ñ)</p>
   </div>
 </template>
 
@@ -61,6 +61,8 @@ export default {
         KeyH: naturalNotes[12],
         KeyJ: naturalNotes[13],
         KeyK: naturalNotes[14],
+        KeyL: naturalNotes[15],
+        Semicolon: naturalNotes[16],
       },
       oscillators: {},
     };
