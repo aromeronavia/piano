@@ -41,10 +41,11 @@ export default {
   },
   data: function () {
     const naturalNotes = this.buildNaturalNotes();
+    const semiNotes = this.buildSemiNotes();
 
     return {
       naturalNotes,
-      semiNotes: this.buildSemiNotes(),
+      semiNotes,
       validSemitoneIndexes: Array.from(Array(21).keys()).reduce((acc, item, index) => {
         if ([1, 2, 4, 5, 6].includes(index % 7)) {
           return [...acc, index]
@@ -63,6 +64,13 @@ export default {
         KeyK: naturalNotes[14],
         KeyL: naturalNotes[15],
         Semicolon: naturalNotes[16],
+        KeyW: semiNotes[5],
+        KeyE: semiNotes[6],
+        KeyT: semiNotes[7],
+        KeyY: semiNotes[8],
+        KeyU: semiNotes[9],
+        KeyO: semiNotes[10],
+        KeyP: semiNotes[11],
       },
       oscillators: {},
     };
