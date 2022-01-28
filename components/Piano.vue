@@ -22,16 +22,18 @@
         />
       </div>
     </div>
-    <p class="text-center mt-4 text-white text-lg"> Play by pressing A, S, D, F, G, H, J, K, L and Semicolon (or Ñ)</p>
+    <p class="text-center mt-4 text-white text-lg">
+      Play by pressing A, S, D, F, G, H, J, K, L and Semicolon (or Ñ)
+    </p>
   </div>
 </template>
 
 <script>
-import Key from '@/components/Key.vue'
-import BlackKey from '@/components/BlackKey.vue'
-import Waver from '@/components/Waver.vue'
-import Note from '@/engine/note'
-import { naturalTones, semiTones, tones } from '@/engine/constants'
+import Key from '@/components/Key.vue';
+import BlackKey from '@/components/BlackKey.vue';
+import Waver from '@/components/Waver.vue';
+import Note from '@/engine/note';
+import { naturalTones, semiTones, tones } from '@/engine/constants';
 
 export default {
   components: { Key, BlackKey, Waver },
@@ -39,7 +41,7 @@ export default {
     type: {
       type: String,
       required: true,
-    }
+    },
   },
   data: function () {
     const naturalNotes = this.buildNaturalNotes();
@@ -48,13 +50,16 @@ export default {
     return {
       naturalNotes,
       semiNotes,
-      validSemitoneIndexes: Array.from(Array(21).keys()).reduce((acc, item, index) => {
-        if ([1, 2, 4, 5, 6].includes(index % 7)) {
-          return [...acc, index]
-        }
+      validSemitoneIndexes: Array.from(Array(21).keys()).reduce(
+        (acc, item, index) => {
+          if ([1, 2, 4, 5, 6].includes(index % 7)) {
+            return [...acc, index];
+          }
 
-        return [...acc]
-      }, []),
+          return [...acc];
+        },
+        []
+      ),
       notesByKeyCode: {
         KeyA: naturalNotes[7],
         KeyS: naturalNotes[8],
@@ -78,14 +83,14 @@ export default {
     };
   },
   methods: {
-    handleKeyDown: function(event) {
+    handleKeyDown: function (event) {
       if (this.notesByKeyCode[event.code]) {
         const note = this.notesByKeyCode[event.code];
         note.setActive();
         this.playNote(note);
       }
     },
-    handleKeyUp: function(event) {
+    handleKeyUp: function (event) {
       if (this.notesByKeyCode[event.code]) {
         const note = this.notesByKeyCode[event.code];
         note.setInactive();
@@ -97,18 +102,22 @@ export default {
       const octave = 2;
 
       for (var octaveIndex = 0; octaveIndex < 3; octaveIndex++) {
-        naturalTones.forEach(tone => {
-          tones.push(new Note({
-            noteName: tone,
-            octave: octave + octaveIndex,
-          }));
-        })
+        naturalTones.forEach((tone) => {
+          tones.push(
+            new Note({
+              noteName: tone,
+              octave: octave + octaveIndex,
+            })
+          );
+        });
       }
 
-      tones.push(new Note({
-        noteName: 'C',
-        octave: 5
-      }));
+      tones.push(
+        new Note({
+          noteName: 'C',
+          octave: 5,
+        })
+      );
 
       return tones;
     },
@@ -117,12 +126,14 @@ export default {
       const octave = 2;
 
       for (var octaveIndex = 0; octaveIndex < 3; octaveIndex++) {
-        semiTones.forEach(tone => {
-          tones.push(new Note({
-            noteName: tone,
-            octave: octave + octaveIndex,
-          }));
-        })
+        semiTones.forEach((tone) => {
+          tones.push(
+            new Note({
+              noteName: tone,
+              octave: octave + octaveIndex,
+            })
+          );
+        });
       }
 
       return tones;
@@ -135,29 +146,35 @@ export default {
 
       this.oscillator.start();
 
-      this.oscillators[note.id] = this.oscillator
+      this.oscillators[note.id] = this.oscillator;
     },
     stopNote(note) {
       this.oscillators[note.id] && this.oscillators[note.id].stop();
       delete this.oscillators[note.id];
     },
     playSemiNote(index) {
-      const indexOf = this.validSemitoneIndexes.indexOf(index)
-      if (indexOf <= 0) { return }
+      const indexOf = this.validSemitoneIndexes.indexOf(index);
+      if (indexOf <= 0) {
+        return;
+      }
 
       const note = this.semiNotes[indexOf];
       this.playNote(note);
     },
     stopSemiNote(index) {
-      const indexOf = this.validSemitoneIndexes.indexOf(index)
-      if (indexOf <= 0) { return }
+      const indexOf = this.validSemitoneIndexes.indexOf(index);
+      if (indexOf <= 0) {
+        return;
+      }
 
       const note = this.semiNotes[indexOf];
       this.stopNote(note);
     },
     getSemiNote(index) {
-      const indexOf = this.validSemitoneIndexes.indexOf(index)
-      if (indexOf <= 0) { return }
+      const indexOf = this.validSemitoneIndexes.indexOf(index);
+      if (indexOf <= 0) {
+        return;
+      }
 
       const note = this.semiNotes[indexOf];
       return note;
@@ -165,27 +182,28 @@ export default {
     stopClickedNote() {
       this.oscillator && this.oscillator.stop();
       this.oscillator = null;
-    }
+    },
   },
   created: function () {
     this.oscillator = null;
 
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
     this.mainGainNode = this.audioContext.createGain();
     this.mainGainNode.connect(this.audioContext.destination);
     this.mainGainNode.gain.value = 0.2;
   },
   mounted: function () {
-    window.addEventListener("keydown", event => {
+    window.addEventListener('keydown', (event) => {
       if (event.defaultPrevented) return;
       if (event.repeat) return;
 
       this.handleKeyDown(event);
     });
 
-    window.addEventListener("keyup", event => {
+    window.addEventListener('keyup', (event) => {
       this.handleKeyUp(event);
     });
-  }
-}
+  },
+};
 </script>
