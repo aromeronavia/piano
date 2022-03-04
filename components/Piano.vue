@@ -83,6 +83,7 @@ export default {
         KeyP: semiNotes[11],
       },
       oscillators: {},
+      gains: {},
     };
   },
   methods: {
@@ -143,17 +144,30 @@ export default {
     },
     playNote(note) {
       this.oscillator = this.audioContext.createOscillator();
+      var gainNode = this.audioContext.createGain();
+      this.oscillator.connect(gainNode);
       this.oscillator.type = this.type;
-      this.oscillator.connect(this.mainGainNode);
+      gainNode.gain.value = 0.2;
+      gainNode.connect(this.audioContext.destination);
       this.oscillator.frequency.value = note.frequency;
 
       this.oscillator.start();
 
       this.oscillators[note.id] = this.oscillator;
+      this.gains[note.id] = gainNode;
     },
     stopNote(note) {
-      this.oscillators[note.id] && this.oscillators[note.id].stop();
-      delete this.oscillators[note.id];
+      if (!this.gains[note.id]) return;
+
+      this.gains[note.id].gain.setValueAtTime(
+        this.mainGainNode.gain.value,
+        this.audioContext.currentTime,
+        0
+      );
+      this.gains[note.id].gain.exponentialRampToValueAtTime(
+        0.0001,
+        this.audioContext.currentTime + 0.03
+      );
     },
     playSemiNote(index) {
       const indexOf = this.validSemitoneIndexes.indexOf(index);
